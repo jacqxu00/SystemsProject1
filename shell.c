@@ -2,16 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
+#include <sys/wait.h>
 
 char ** parse_args( char * line, char * sep ) {
   char ** args = malloc(6 * sizeof(char *));
+  //char ** args = malloc(sizeof(line));
   char * flag = NULL;
   
   int i = 0;
   while ((flag = strsep(&line, sep))) {
-    args[i] = flag;
-    i++;
+    if (strcmp(flag, "") != 0){
+      //printf("flag %s\n", flag);
+      args[i] = flag;
+      i++;
+    }
   }
   args[i] = NULL;
   return args;
@@ -56,11 +60,10 @@ void get_and_run(char * s){
     }
     */
 
-    //currently works with no spaces (ex: "ls;ls")
     char ** commands = parse_args(s, ";");
 
     while (commands){
-      printf("command: %s", *commands);
+      printf("command: %s\n", *commands);
       char ** command = parse_args(*commands, " ");
       fork_and_run(command);
       commands++;
