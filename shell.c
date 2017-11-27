@@ -4,8 +4,20 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+int count_chars(char * s, char * c){
+	int i;
+	int ans = 0;
+    for (i=0; s[i]; i++) {
+    	if (strcmp(s, c) != 0) {
+    		ans++;
+    	}
+    }
+	return ans;
+}
+
 char ** parse_args( char * line, char * sep ) {
-  char ** args = malloc(6 * sizeof(char *));
+	int num = count_chars(line,sep);
+  char ** args = malloc((num+1) * sizeof(char *));
   //char ** args = malloc(sizeof(line));
   char * flag = NULL;
   
