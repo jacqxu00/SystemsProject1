@@ -5,18 +5,25 @@
 #include <sys/wait.h>
 
 int count_chars(char * s, char * c){
-	int i;
-	int ans = 0;
-    for (i=0; s[i]; i++) {
-    	if (strcmp(s, c) != 0) {
-    		ans++;
-    	}
+  int i;
+  int ans = 0;
+  for (i=0; s[i]; i++) {
+    char temp[2];
+    temp[0] = s[i];
+    temp[1] = '\0';
+    //printf("s[i] = %c\n", s[i]);
+    //printf("s = %s\n", s);
+    //printf("c = %s\n", c);
+    if (strcmp(temp, c) == 0) {
+      ans++;
     }
-	return ans;
+  }
+  return ans;
 }
 
 char ** parse_args( char * line, char * sep ) {
-	int num = count_chars(line,sep);
+  int num = count_chars(line,sep);
+  printf("num = %d\n", num);
   char ** args = malloc((num+1) * sizeof(char *));
   //char ** args = malloc(sizeof(line));
   char * flag = NULL;
@@ -24,7 +31,7 @@ char ** parse_args( char * line, char * sep ) {
   int i = 0;
   while ((flag = strsep(&line, sep))) {
     if (strcmp(flag, "") != 0){
-      //printf("flag %s\n", flag);
+      printf("flag %s\n", flag);
       args[i] = flag;
       i++;
     }
@@ -77,7 +84,9 @@ void get_and_run(char * s){
     while (commands){
       printf("command: %s\n", *commands);
       char ** command = parse_args(*commands, " ");
-      fork_and_run(command);
+      if (command != NULL){
+	fork_and_run(command);
+      }
       commands++;
     }
     printf("\n--\n\nenter another command: ");
