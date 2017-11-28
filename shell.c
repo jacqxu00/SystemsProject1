@@ -80,8 +80,8 @@ void get_and_run(char * s){
     */
 
     char ** commands = parse_args(s, ";");
-		int num_commands = count_chars(s, ";");
-    while (*commands && num_commands >= 0){
+		int num_commands = count_chars(s, ";"); //brute fix
+    while (*commands && num_commands+1 >= 0){
       printf("command: %s\n", *commands);
       char ** command = parse_args(*commands, " ");
       if (command != NULL){
