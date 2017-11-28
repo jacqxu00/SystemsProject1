@@ -23,7 +23,7 @@ int count_chars(char * s, char * c){
 
 char ** parse_args( char * line, char * sep ) {
   int num = count_chars(line,sep);
-  printf("num = %d\n", num);
+  printf("num of \"%s\" in \"%s\" = %d\n", sep, line, num);
   char ** args = malloc((num+1) * sizeof(char *));
   //char ** args = malloc(sizeof(line));
   char * flag = NULL;
@@ -80,14 +80,15 @@ void get_and_run(char * s){
     */
 
     char ** commands = parse_args(s, ";");
-
-    while (commands){
+		int num_commands = count_chars(s, ";");
+    while (*commands && num_commands >= 0){
       printf("command: %s\n", *commands);
       char ** command = parse_args(*commands, " ");
       if (command != NULL){
-	fork_and_run(command);
+				fork_and_run(command);
       }
       commands++;
+			num_commands--;
     }
     printf("\n--\n\nenter another command: ");
   }
