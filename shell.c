@@ -81,14 +81,25 @@ void get_and_run(char * s){
 
     char ** commands = parse_args(s, ";");
 		int num_commands = count_chars(s, ";"); //brute fix
+		
     while (*commands && num_commands+1 >= 0){
       printf("command: %s\n", *commands);
       char ** command = parse_args(*commands, " ");
-      if (command != NULL){
+			if (strcmp(*command,"exit")==0) {
+				char * args[1];
+				args[0] = "exit"; //FIX not exiting
+				execvp("exit",args);
+				return;
+			}
+			else if (strcmp(*command,"cd")==0) {
+				chdir(command[1]);
+			}
+      else if (command != NULL){
 				fork_and_run(command);
       }
       commands++;
 			num_commands--;
+			
     }
     printf("\n--\n\nenter another command: ");
   }
