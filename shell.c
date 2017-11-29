@@ -4,6 +4,11 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+/* count_chars
+arguments: string s and character/string c
+description: uses a for loop to parse through s and compares each character to c
+returns: number of instances of the character, c, in the string, s
+*/
 int count_chars(char * s, char * c){
   int i;
   int ans = 0;
@@ -21,6 +26,11 @@ int count_chars(char * s, char * c){
   return ans;
 }
 
+/* parse_args
+arguments: string line and character/string sep
+description: cuts off line by sep, and puts that component into args string array
+returns: array of strings where each slot is an arg
+*/
 char ** parse_args( char * line, char * sep ) {
   int num = count_chars(line,sep);
   printf("num of \"%s\" in \"%s\" = %d\n", sep, line, num);
@@ -40,6 +50,10 @@ char ** parse_args( char * line, char * sep ) {
   return args;
 }
 
+/* fork_and_run
+arguments: string array of arguments
+description: forks, child will execvp the command, parent waits for child
+*/
 void fork_and_run(char ** args){
   int f = fork();
 
@@ -60,6 +74,12 @@ void fork_and_run(char ** args){
   }
 }
 
+/* get_and_run
+arguments: string s
+description: receives commands from user, and goes through the string
+					   while there are more args, run those
+						 exit and cd run without forking
+*/
 void get_and_run(char * s){
   printf("enter a command: ");
   while (fgets(s, 256, stdin)){
@@ -104,6 +124,7 @@ void get_and_run(char * s){
     printf("\n--\n\nenter another command: ");
   }
 }
+
 
 int main() {
 
