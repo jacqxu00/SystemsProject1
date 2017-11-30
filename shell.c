@@ -3,11 +3,12 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 /* count_chars()
-arguments: string s and character/string c
-description: uses a for loop to parse through s and compares each character to c
-returns: number of instances of the character, c, in the string, s
+   arguments: string s and character/string c
+   description: uses a for loop to parse through s and compares each character to c
+   returns: number of instances of the character, c, in the string, s
 */
 int count_chars(char * s, char * c){
   int i;
@@ -27,9 +28,9 @@ int count_chars(char * s, char * c){
 }
 
 /* parse_args()
-arguments: string line and character/string sep
-description: cuts off line by sep, and puts that component into args string array
-returns: array of strings where each slot is an arg
+   arguments: string line and character/string sep
+   description: cuts off line by sep, and puts that component into args string array
+   returns: array of strings where each slot is an arg
 */
 char ** parse_args( char * line, char * sep ) {
   int num = count_chars(line,sep);
@@ -51,8 +52,8 @@ char ** parse_args( char * line, char * sep ) {
 }
 
 /* fork_and_run()
-arguments: string array of arguments
-description: forks, child will execvp the command, parent waits for child
+   arguments: string array of arguments
+   description: forks, child will execvp the command, parent waits for child
 */
 void fork_and_run(char ** args){
   int f = fork();
@@ -75,10 +76,10 @@ void fork_and_run(char ** args){
 }
 
 /* get_and_run()
-arguments: string s
-description: receives commands from user, and goes through the string
-					   while there are more args, run those
-						 exit and cd run without forking
+   arguments: string s
+   description: receives commands from user, and goes through the string
+   while there are more args, run those
+   exit and cd run without forking
 */
 void get_and_run(char * s){
   printf("enter a command: ");
@@ -100,47 +101,53 @@ void get_and_run(char * s){
     */
 
     char ** commands = parse_args(s, ";");
-		int num_commands = count_chars(s, ";"); //brute fix
+    int num_commands = count_chars(s, ";"); //brute fix
 		
     while (*commands && num_commands+1 >= 0){
       printf("command: %s\n", *commands);
+      if (count_chars(*commands, ">") > 0){
+	char ** redirect = parse_args(*commands, ">");
+	//enter stuff here
+      }
       char ** command = parse_args(*commands, " ");
-			if (strcmp(*command,"exit")==0) {
-				char * args[1];
-				args[0] = "exit"; //FIX not exiting
-				execvp("exit",args);
-				return;
-			}
-			else if (strcmp(*command,"cd")==0) {
-				chdir(command[1]);
-			}
+      if (strcmp(*command,"exit")==0) {
+	char * args[1];
+	args[0] = "exit";
+	execvp("exit",args);
+	return;
+      }
+      else if (strcmp(*command,"cd")==0) {
+	chdir(command[1]);
+      }
       else if (command != NULL){
-				fork_and_run(command);
+	fork_and_run(command);
       }
       commands++;
-			num_commands--;
-			
+      num_commands--;
+      
     }
     printf("\n--\n\nenter another command: ");
   }
 }
 
 /* simple_pipe()
-arguments: string s
-description: receives full piping command and separates by the | char
-					   creates a pipe where the first sub-command writes, the second reads
-						 run the first sub-command then the second takes it in and runs
+   arguments: string s
+   description: receives full piping command and separates by the | char
+   creates a pipe where the first sub-command writes, the second reads
+   run the first sub-command then the second takes it in and runs
 */
 void simple_pipe(char * s) {
-	
+  
 }
 
 /* simple_redirect()
-arguments: 
-description: 
+   arguments: 
+   description: 
 */
 void simple_redirect() {
-	
+  int fd = open(foo.txt, O_CREAT | O_WRONLY, 0644);
+  int stdout_fd = dup(1);
+  dup2(fd,1);
 }
 
 int main() {
