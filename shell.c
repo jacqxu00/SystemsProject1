@@ -106,13 +106,10 @@ void get_and_run(char * s){
       printf("command: %s\n", *commands);
       char ** command = parse_args(*commands, " ");
 			if (strcmp(*command,"exit")==0) {
-				char * args[1];
-				args[0] = "exit"; //FIX not exiting
-				execvp("exit",args);
-				return;
+				exit();
 			}
 			else if (strcmp(*command,"cd")==0) {
-				chdir(command[1]);
+				cd(command[1]);
 			}
       else if (command != NULL){
 				fork_and_run(command);
@@ -132,7 +129,13 @@ description: receives full piping command and separates by the | char
 						 run the first sub-command then the second takes it in and runs
 */
 void simple_pipe(char * s) {
-	
+	int num_pipes = count_chars(s, "|");
+	if (num_pipes >1 ) {
+		printf("Please use a single pipe");
+	}
+	else {
+		
+	}
 }
 
 /* simple_redirect()
@@ -141,6 +144,26 @@ description:
 */
 void simple_redirect() {
 	
+}
+
+/* exit()
+description: creates an array of strings where the first element is the "exit" string
+						 execvp exit using this information
+*/
+void exit() {
+	char * args[1];
+	args[0] = "exit";
+	execvp("exit",args);
+	return;
+}
+
+/* cd()
+arguments: string s
+description: changes directory based on the argument
+						 (separated function for the sake of formatting)
+*/
+void cd(* char s) {
+	chdir(s);
 }
 
 int main() {
