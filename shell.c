@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-/* count_chars
+/* count_chars()
 arguments: string s and character/string c
 description: uses a for loop to parse through s and compares each character to c
 returns: number of instances of the character, c, in the string, s
@@ -26,7 +26,7 @@ int count_chars(char * s, char * c){
   return ans;
 }
 
-/* parse_args
+/* parse_args()
 arguments: string line and character/string sep
 description: cuts off line by sep, and puts that component into args string array
 returns: array of strings where each slot is an arg
@@ -50,7 +50,7 @@ char ** parse_args( char * line, char * sep ) {
   return args;
 }
 
-/* fork_and_run
+/* fork_and_run()
 arguments: string array of arguments
 description: forks, child will execvp the command, parent waits for child
 */
@@ -74,7 +74,7 @@ void fork_and_run(char ** args){
   }
 }
 
-/* get_and_run
+/* get_and_run()
 arguments: string s
 description: receives commands from user, and goes through the string
 					   while there are more args, run those
@@ -125,6 +125,23 @@ void get_and_run(char * s){
   }
 }
 
+/* simple_pipe()
+arguments: string s
+description: receives full piping command and separates by the | char
+					   creates a pipe where the first sub-command writes, the second reads
+						 run the first sub-command then the second takes it in and runs
+*/
+void simple_pipe(char * s) {
+	
+}
+
+/* simple_redirect()
+arguments: 
+description: 
+*/
+void simple_redirect() {
+	
+}
 
 int main() {
 
