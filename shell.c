@@ -5,6 +5,29 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
+/* exit()
+   description: creates an array of strings where the first element is the "exit" string
+   execvp exit using this information
+*/
+//error when
+//1. ls > foo.txt
+//2. exit
+void exit_shell() {
+  char * args[1];
+  args[0] = "exit";
+  execvp("exit",args);
+}
+
+/* cd()
+   arguments: string s
+   description: changes directory based on the argument
+   (separated function for the sake of formatting)
+*/
+void cd(char * s) {
+  chdir(s);
+}
+
+
 /* count_chars()
    arguments: string s and character/string c
    description: uses a for loop to parse through s and compares each character to c
@@ -71,7 +94,22 @@ void fork_and_run(char ** args){
   else{
     printf("\nCHILD:\n");
     printf("pid: %d\n", getpid() );
-    execvp(args[0], args);
+
+    //printf("args[0] = %s\n", args[0]);
+    if (args[1] != NULL && strcmp(args[1], ">") == 0){
+      char ** arr;
+      arr[0] = args[0];
+      arr[1] = NULL;
+      int fd = open(args[2], O_CREAT | O_WRONLY, 0644);
+      int stdout_fd = dup(1);
+      dup2(fd,1);
+      //printf("args[0] = %s\n", args[0]);
+      execvp(args[0], arr);
+      dup2(stdout_fd,1);
+    }
+    else{
+      execvp(args[0], args);
+    }
   }
 }
 
@@ -105,17 +143,15 @@ void get_and_run(char * s){
 		
     while (*commands && num_commands+1 >= 0){
       printf("command: %s\n", *commands);
-      if (count_chars(*commands, ">") > 0){
-	char ** redirect = parse_args(*commands, ">");
-	//enter stuff here
-      }
       char ** command = parse_args(*commands, " ");
-			if (strcmp(*command,"exit")==0) {
-				exit();
-			}
-			else if (strcmp(*command,"cd")==0) {
-				cd(command[1]);
-			}
+      
+      if (strcmp(*command,"exit")==0) {
+	exit_shell();
+	return;	
+      }
+      else if (strcmp(*command,"cd")==0) {
+	cd(command[1]);
+      }
       else if (command != NULL){
 	fork_and_run(command);
       }
@@ -134,44 +170,23 @@ void get_and_run(char * s){
    run the first sub-command then the second takes it in and runs
 */
 void simple_pipe(char * s) {
-	int num_pipes = count_chars(s, "|");
-	if (num_pipes > 1 ) {
-		printf("Please use a single pipe.");
-	}
-	else {
+  int num_pipes = count_chars(s, "|");
+  if (num_pipes > 1 ) {
+    printf("Please use a single pipe.");
+  }
+  else {
 		
-	}
+  }
 }
 
 /* simple_redirect()
    arguments: 
    description: 
 */
-void simple_redirect() {
-  int fd = open(foo.txt, O_CREAT | O_WRONLY, 0644);
-  int stdout_fd = dup(1);
-  dup2(fd,1);
+void simple_redirect(char * file) {
+
 }
 
-/* exit()
-description: creates an array of strings where the first element is the "exit" string
-						 execvp exit using this information
-*/
-void exit() {
-	char * args[1];
-	args[0] = "exit";
-	execvp("exit",args);
-	return;
-}
-
-/* cd()
-arguments: string s
-description: changes directory based on the argument
-						 (separated function for the sake of formatting)
-*/
-void cd(* char s) {
-	chdir(s);
-}
 
 int main() {
 
