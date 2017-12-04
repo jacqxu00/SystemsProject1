@@ -165,7 +165,7 @@ void simple_pipe(char ** s) {
    resets stdout
 */
 void simple_redirect(char ** args, int x) {
-  if (x = 1){
+  if (x == 1){
     char ** arr = malloc(256 * sizeof(char *));
     arr[0] = args[0];
     arr[1] = NULL;
@@ -174,7 +174,7 @@ void simple_redirect(char ** args, int x) {
     //printf("args[0] = %s\n", args[0]);
     execvp(args[0], arr);
   }
-  else if (x = 2){
+  else if (x == 2){
     char ** arr = malloc(256 * sizeof(char *));
     arr[0] = args[0];
     arr[1] = NULL;
