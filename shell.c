@@ -22,6 +22,9 @@ int count_chars(char * s, char * c){
   return ans;
 }
 
+/* trim()
+   description: deletes all spaces from string
+*/
 void trim(char * arr)
 {
   char* i = arr;
@@ -109,9 +112,6 @@ void fork_and_run(char ** args){
    description: creates an array of strings where the first element is the "exit" string
    execvp exit using this information
 */
-//error when
-//1. ls > foo.txt
-//2. exit
 void exit_shell() {
   char * args[1];
   args[0] = "exit";
@@ -157,9 +157,12 @@ void simple_pipe(char ** s) {
   }
 }
 
-/* simple_redirect()
-   arguments: 
-   description: 
+/* ======simple_redirect()======
+   arguments: string s, int x
+   description: parses through full piping command until it reaches > or <
+   runs beginning command
+   redirects output of first command into specified file
+   resets stdout
 */
 void simple_redirect(char ** args, int x) {
   if (x = 1){
