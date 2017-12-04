@@ -115,14 +115,15 @@ void fork_and_run(char ** args){
 
 /* simple_pipe()
    arguments: string s
-   description: receives full piping command and separates by the | char
-   creates a pipe where the first sub-command writes, the second reads
-   run the first sub-command then the second takes it in and runs
+   description: parses through full piping command until it reaches |
+								goes through the commands again from beginning and collects everything
+   							redirects the command and then executes it so that the output of the command before | is the input of the command after
+
 */
 void simple_pipe(char ** s) {
   int i, j;
   for (i = 0; s[i]; i++) {
-    char * temp;
+    char * temp = malloc(256 * sizeof(char *));;
     *temp = s[i][0];
     if (strcmp(temp,"|") == 0) {
       
@@ -211,7 +212,7 @@ void get_and_run(char * s){
 	}
       }
       */
-      printf("?\n");
+      printf("function: %d\n", function);
       if (function == 1){
 				printf("duh");
 				simple_pipe(command);
