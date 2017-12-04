@@ -6,8 +6,8 @@
 * can exit and cd into different directories
 
 ### Attempted
-* piping (works on macs???)
-* redirection (both ways) [segfaults?]
+* piping
+* redirection (both ways)
 
 ### Bugs
 * occasionally there are random segfaults/incorrect mallocs and we couldn't figure it out
