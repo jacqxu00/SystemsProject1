@@ -145,7 +145,7 @@ void simple_pipe(char ** s) {
         strcat(first, s[j]);
         strcat(first, " ");
       }
-      //printf("first part: %s", first);
+      printf("first part: %s", first);
       
       FILE *fp = popen(first, "r");
       int fd = fileno(fp);
@@ -200,13 +200,13 @@ void get_and_run(char * s){
     char ** commands = parse_args(s, ";");
     int num_commands = count_chars(s, ";"); //brute fix
 
-    /*
+    
     int i;
     int function = 0;
-    printf("num_commands = %d\n", num_commands);
+    //printf("num_commands = %d\n", num_commands);
     for (i = 0; i<num_commands+1; i++) {
-      printf("===RAN===\n");
-      printf("command = %s", commands[i]);
+      //printf("===RAN===\n");
+      //printf("command = %s", commands[i]);
       if (strchr(commands[i],'|')==0) {
 	function = 1;
       }
@@ -217,13 +217,15 @@ void get_and_run(char * s){
 	function = 3;
       }
     }
-    */
+    
     
     while (*commands && num_commands+1 >= 0){
-      //printf("command: %s\n", *commands);
-      
-      if (strchr(*commands,'|')){
+      printf("command: %s\n", *commands);
+      if (function != 0) {
+				if (strchr(*commands,'|')){
+			//if (function == 1) {
 	char ** command = parse_args(*commands, "|");
+	//printf("piping");
 	simple_pipe(command);
 	break;
       }
@@ -241,6 +243,7 @@ void get_and_run(char * s){
 	dup2(stdin_fd,0);
 	break;
       }
+		}
       
       /*
 	int function = 0;

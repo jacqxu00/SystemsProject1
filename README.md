@@ -11,7 +11,8 @@
 
 ### Bugs
 * occasionally there are random segfaults/incorrect mallocs and we couldn't figure it out
-* piping was working on Jackie's computer (Mac) but not on Henry's but after Henry made some changes it doesn't work on her computer anymore either. Will try to see what's wrong
+* piping was working on Jackie's computer (Mac) but not on Henry's but after some changes were made elsewhere it no longer works on her computer. Will try to see what's wrong.
+* redirection was working in a previous commit, but no longer works either.
 
 ### Files & Function Headers:
 shell.c receives commands from user and runs them
