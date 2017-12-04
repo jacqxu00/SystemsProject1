@@ -182,36 +182,38 @@ void get_and_run(char * s){
     while (*commands && num_commands+1 >= 0){
       printf("command: %s\n", *commands);
       char ** command = parse_args(*commands, " ");
-      int i, function;
+      int i;
+			int function = 0;
 			for (i = 0; command[i]; i++) {
 				if (strcmp(command[i],"|")==0) {
-					function = 0;
-				}
-				else if (strcmp(command[i],">")==0) {
 					function = 1;
 				}
-				else if (strcmp(command[i],"<")==0) {
+				else if (strcmp(command[i],">")==0) {
 					function = 2;
 				}
+				else if (strcmp(command[i],"<")==0) {
+					function = 3;
+				}
 			}
-			if (function == 0) {
-				printf("Piping");
-				simple_pipe(command);
+			if (function != 0) {
+				if (function == 1) {
+					simple_pipe(command);
+				}
 			}
-			/*
-      if (strcmp(*command,"exit")==0) {
-				exit_shell();
-				return;	
-      }
-      else if (strcmp(*command,"cd")==0) {
-				cd(command[1]);
-      }
-      else if (command != NULL){
-				fork_and_run(command);
-      }*/
-      commands++;
-      num_commands--;
-      
+			else {
+      	if (strcmp(*command,"exit")==0) {
+					exit_shell();
+					return;	
+      	}
+      	else if (strcmp(*command,"cd")==0) {
+					cd(command[1]);
+      	}
+      	else if (command != NULL){
+					fork_and_run(command);
+      	}
+      	commands++;
+      	num_commands--;
+			}
     }
     printf("\n--\n\nenter another command: ");
   }
