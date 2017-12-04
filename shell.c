@@ -113,6 +113,44 @@ void fork_and_run(char ** args){
   }
 }
 
+/* simple_pipe()
+   arguments: string s
+   description: receives full piping command and separates by the | char
+   creates a pipe where the first sub-command writes, the second reads
+   run the first sub-command then the second takes it in and runs
+*/
+void simple_pipe(char ** s) {
+  int i, j;
+	for (i = 0; s[i]; i++) {
+		char * temp;
+		*temp = s[i][0];
+		if (strcmp(temp,"|") == 0) {
+			
+			char first[256] = "";
+			for (j = 0; j < i; j++) {
+        strcat(first, s[j]);
+        strcat(first, " ");
+			}
+      printf("first part: %s", first);
+			
+      FILE *fp = popen(first, "r");
+      int fd = fileno(fp);
+      dup2(fd, 0);
+      close(fd);
+      s += i + 1;
+      execvp(s[0], s);
+		}		
+	}
+}
+
+/* simple_redirect()
+   arguments: 
+   description: 
+*/
+void simple_redirect(char * file) {
+
+}
+
 /* get_and_run()
    arguments: string s
    description: receives commands from user, and goes through the string
@@ -144,17 +182,33 @@ void get_and_run(char * s){
     while (*commands && num_commands+1 >= 0){
       printf("command: %s\n", *commands);
       char ** command = parse_args(*commands, " ");
-      
+      int i, function;
+			for (i = 0; command[i]; i++) {
+				if (strcmp(command[i],"|")==0) {
+					function = 0;
+				}
+				else if (strcmp(command[i],">")==0) {
+					function = 1;
+				}
+				else if (strcmp(command[i],"<")==0) {
+					function = 2;
+				}
+			}
+			if (function == 0) {
+				printf("Piping");
+				simple_pipe(command);
+			}
+			/*
       if (strcmp(*command,"exit")==0) {
-	exit_shell();
-	return;	
+				exit_shell();
+				return;	
       }
       else if (strcmp(*command,"cd")==0) {
-	cd(command[1]);
+				cd(command[1]);
       }
       else if (command != NULL){
-	fork_and_run(command);
-      }
+				fork_and_run(command);
+      }*/
       commands++;
       num_commands--;
       
@@ -162,31 +216,6 @@ void get_and_run(char * s){
     printf("\n--\n\nenter another command: ");
   }
 }
-
-/* simple_pipe()
-   arguments: string s
-   description: receives full piping command and separates by the | char
-   creates a pipe where the first sub-command writes, the second reads
-   run the first sub-command then the second takes it in and runs
-*/
-void simple_pipe(char * s) {
-  int num_pipes = count_chars(s, "|");
-  if (num_pipes > 1 ) {
-    printf("Please use a single pipe.");
-  }
-  else {
-		
-  }
-}
-
-/* simple_redirect()
-   arguments: 
-   description: 
-*/
-void simple_redirect(char * file) {
-
-}
-
 
 int main() {
 
