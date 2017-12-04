@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <fcntl.h>
+#include "shell.h"
 
 /* count_chars()
    arguments: string s and character/string c
@@ -27,6 +22,19 @@ int count_chars(char * s, char * c){
   return ans;
 }
 
+void trim(char * arr)
+{
+  char* i = arr;
+  char* j = arr;
+  while(*j){
+    *i = *j++;
+    if(*i != ' '){
+      i++;
+    }
+  }
+  *i = 0;
+}
+
 /* parse_args()
    arguments: string line and character/string sep
    description: cuts off line by sep, and puts that component into args string array
@@ -42,6 +50,7 @@ char ** parse_args( char * line, char * sep ) {
   int i = 0;
   while ((flag = strsep(&line, sep))) {
     if (strcmp(flag, "") != 0){
+      //trim(flag);
       printf("flag %s\n", flag);
       args[i] = flag;
       i++;
@@ -57,7 +66,8 @@ char ** parse_args( char * line, char * sep ) {
 */
 void fork_and_run(char ** args){
   int f = fork();
-
+  int replace = 0;
+  
   //parent
   if (f){
     int status;
@@ -72,21 +82,26 @@ void fork_and_run(char ** args){
     printf("\nCHILD:\n");
     printf("pid: %d\n", getpid() );
 
+    /*
+    int stdout_fd = dup(1);
     //printf("args[0] = %s\n", args[0]);
     if (args[1] != NULL && strcmp(args[1], ">") == 0){
-      char ** arr;
+      char ** arr = malloc(256 * sizeof(char *));
       arr[0] = args[0];
       arr[1] = NULL;
       int fd = open(args[2], O_CREAT | O_WRONLY, 0644);
-      int stdout_fd = dup(1);
       dup2(fd,1);
+      replace = 1;
       //printf("args[0] = %s\n", args[0]);
       execvp(args[0], arr);
+    }
+    if (replace == 1){
       dup2(stdout_fd,1);
     }
-    else{
+    */
+    //else{
       execvp(args[0], args);
-    }
+      //}
   }
 }
 
@@ -115,14 +130,13 @@ void cd(char * s) {
 /* simple_pipe()
    arguments: string s
    description: parses through full piping command until it reaches |
-								goes through the commands again from beginning and collects everything
-   							redirects the command and then executes it so that the output of the command before | is the input of the command after
-
+   goes through the commands again from beginning and collects everything
+   redirects the command and then executes it so that the output of the command before | is the input of the command after
 */
 void simple_pipe(char ** s) {
   int i, j;
   for (i = 0; s[i]; i++) {
-    char * temp = malloc(256 * sizeof(char *));;
+    char * temp = malloc(256 * sizeof(char *));
     *temp = s[i][0];
     if (strcmp(temp,"|") == 0) {
       
@@ -147,8 +161,25 @@ void simple_pipe(char ** s) {
    arguments: 
    description: 
 */
-void simple_redirect(char * file) {
-
+void simple_redirect(char ** args, int x) {
+  if (x = 1){
+    char ** arr = malloc(256 * sizeof(char *));
+    arr[0] = args[0];
+    arr[1] = NULL;
+    int fd = open(args[2], O_CREAT | O_WRONLY, 0644);
+    dup2(fd,1);
+    //printf("args[0] = %s\n", args[0]);
+    execvp(args[0], arr);
+  }
+  else if (x = 2){
+    char ** arr = malloc(256 * sizeof(char *));
+    arr[0] = args[0];
+    arr[1] = NULL;
+    int fd = open(args[2], O_CREAT | O_RDONLY, 0644);
+    dup2(fd,0);
+    //printf("args[0] = %s\n", args[0]);
+    execvp(args[0], arr);    
+  }
 }
 
 /* get_and_run()
@@ -187,50 +218,75 @@ void get_and_run(char * s){
     
     while (*commands && num_commands+1 >= 0){
       printf("command: %s\n", *commands);
-
-      int function = 0;
-      if (strchr(*commands,'|')) {
-				function = 1;
-				printf("1\n");
+      
+      if (strchr(*commands,'|')){
+	char ** command = parse_args(*commands, "|");
+	simple_pipe(command);
+	break;
       }
-      else if (strchr(*commands,'>')) {
-				function = 2;
-				printf("2\n");
+      else if (strchr(*commands,'>')){
+	char ** command = parse_args(*commands, ">");
+	int stdout_fd = dup(1);
+	simple_redirect(command, 1);
+	dup2(stdout_fd,1);
+	break;
       }
-      else if (strchr(*commands,'<')) {
-				function = 3;
-				printf("3\n");
+      else if (strchr(*commands,'<')){
+	char ** command = parse_args(*commands, ">");
+	int stdin_fd = dup(0);
+	simple_redirect(command, 2);
+	dup2(stdin_fd,0);
+	break;
       }
-
+      
+      /*
+	int function = 0;
+	if (strchr(*commands,'|')) {
+	function = 1;
+	printf("1\n");
+	}
+	else if (strchr(*commands,'>')) {
+	function = 2;
+	printf("2\n");
+	}
+	else if (strchr(*commands,'<')) {
+	function = 3;
+	printf("3\n");
+	}
+      */
+      
       char ** command = parse_args(*commands, " ");
+      
+      /*
+	if (function != 0) {
+	if (function == 1) {
+	simple_pipe(command);
+	}
+	}
+      */
 
       /*
-      if (function != 0) {
-	if (function == 1) {
-	  simple_pipe(command);
+	printf("function: %d\n", function);
+	if (function == 1){
+	printf("duh");
+	simple_pipe(command);
 	}
-      }
-      */
-      printf("function: %d\n", function);
-      if (function == 1){
-				printf("duh");
-				simple_pipe(command);
-      }
       else {
-				printf("dumb");
-      	if (strcmp(*command,"exit")==0) {
-	 			 	exit_shell();
-	 				return;	
-      	}
-      	else if (strcmp(*command,"cd")==0) {
-	 			 	cd(command[1]);
-      	}
-      	else if (command != NULL){
-	  			fork_and_run(command);
-      	}
-      	commands++;
-      	num_commands--;
+      */
+      printf("dumb");
+      if (strcmp(*command,"exit")==0) {
+	exit_shell();
+	return;	
       }
+      else if (strcmp(*command,"cd")==0) {
+	cd(command[1]);
+      }
+      else if (command != NULL){
+	fork_and_run(command);
+      }
+      commands++;
+      num_commands--;
+      //}
     }
     printf("\n--\n\nenter another command: ");
   }
