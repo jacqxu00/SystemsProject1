@@ -6,10 +6,11 @@
 * can exit and cd into different directories
 
 ### Attempted
-* 
+* piping (works on macs???)
+* redirection (both ways) [segfaults?]
 
 ### Bugs
-* occasionally there are random segfaults and we couldn't figure it out
+* occasionally there are random segfaults/incorrect mallocs and we couldn't figure it out
 
 ### Files & Function Headers:
 shell.c receives commands from user and runs them
@@ -18,6 +19,9 @@ shell.c receives commands from user and runs them
 arguments: string s and character/string c
 description: uses a for loop to parse through s and compares each character to c
 returns: number of instances of the character, c, in the string, s
+
+/* =====trim()=====
+description: deletes all spaces from string
 
 /* =====parse_args()=====
 arguments: string line and character/string sep
@@ -30,7 +34,7 @@ arguments: string array of arguments
 description: forks, child will execvp the command, parent waits for child
 */
 
-/* =====exit()=====
+/* =====exit_shell()=====
    description: creates an array of strings where the first element is the "exit" string
    execvp exit using this information
 */
@@ -46,6 +50,15 @@ description: forks, child will execvp the command, parent waits for child
    description: parses through full piping command until it reaches |
 				goes through the commands again from beginning and collects everything
    				redirects the command and then executes it so that the output of the command before | is the input of the command after
+
+*/
+
+/* ======simple_redirect()======
+   arguments: string s, int x
+   description: parses through full piping command until it reaches > or <
+				runs beginning command
+   				redirects output of first command into specified file
+				resets stdout
 
 */
 
