@@ -201,49 +201,49 @@ void get_and_run(char * s){
     int num_commands = count_chars(s, ";"); //brute fix
 
     
-    int i;
+    /*int i;
     int function = 0;
     //printf("num_commands = %d\n", num_commands);
     for (i = 0; i<num_commands+1; i++) {
       //printf("===RAN===\n");
       //printf("command = %s", commands[i]);
       if (strchr(commands[i],'|')==0) {
-	function = 1;
+				function = 1;
       }
       else if (strchr(commands[i],'>')==0) {
-	function = 2;
+				function = 2;
       }
       else if (strchr(commands[i],'<')==0) {
-	function = 3;
+				function = 3;
       }
-    }
+    }*/
     
     
     while (*commands && num_commands+1 >= 0){
       //printf("command: %s\n", *commands);
-      if (function != 0) {
-				if (strchr(*commands,'|')){
-			//if (function == 1) {
-	char ** command = parse_args(*commands, "|");
-	//printf("piping");
-	simple_pipe(command);
-	break;
-      }
+      //if (function != 0) {
+			if (strchr(*commands,'|')){
+					//if (function == 1) {
+					//printf("piping");
+					char ** command = parse_args(*commands, " ");
+					simple_pipe(command);
+					break;
+			}
       else if (strchr(*commands,'>')){
-	char ** command = parse_args(*commands, ">");
-	int stdout_fd = dup(1);
-	simple_redirect(command, 1);
-	dup2(stdout_fd,1);
-	break;
+				char ** command = parse_args(*commands, ">");
+				int stdout_fd = dup(1);
+				simple_redirect(command, 1);
+				dup2(stdout_fd,1);
+				break;
       }
       else if (strchr(*commands,'<')){
-	char ** command = parse_args(*commands, ">");
-	int stdin_fd = dup(0);
-	simple_redirect(command, 2);
-	dup2(stdin_fd,0);
-	break;
+				char ** command = parse_args(*commands, ">");
+				int stdin_fd = dup(0);
+				simple_redirect(command, 2);
+				dup2(stdin_fd,0);
+				break;
       }
-		}
+			//}
       
       /*
 	int function = 0;
@@ -281,14 +281,14 @@ void get_and_run(char * s){
       */
       //printf("dumb");
       if (strcmp(*command,"exit")==0) {
-	exit_shell();
-	return;	
+				exit_shell();
+				return;	
       }
       else if (strcmp(*command,"cd")==0) {
-	cd(command[1]);
+				cd(command[1]);
       }
       else if (command != NULL){
-	fork_and_run(command);
+				fork_and_run(command);
       }
       commands++;
       num_commands--;
