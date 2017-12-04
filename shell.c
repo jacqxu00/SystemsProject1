@@ -220,7 +220,7 @@ void get_and_run(char * s){
     
     
     while (*commands && num_commands+1 >= 0){
-      printf("command: %s\n", *commands);
+      //printf("command: %s\n", *commands);
       if (function != 0) {
 				if (strchr(*commands,'|')){
 			//if (function == 1) {
