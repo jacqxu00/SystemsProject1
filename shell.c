@@ -121,26 +121,26 @@ void fork_and_run(char ** args){
 */
 void simple_pipe(char ** s) {
   int i, j;
-	for (i = 0; s[i]; i++) {
-		char * temp;
-		*temp = s[i][0];
-		if (strcmp(temp,"|") == 0) {
-			
-			char first[256] = "";
-			for (j = 0; j < i; j++) {
+  for (i = 0; s[i]; i++) {
+    char * temp;
+    *temp = s[i][0];
+    if (strcmp(temp,"|") == 0) {
+      
+      char first[256] = "";
+      for (j = 0; j < i; j++) {
         strcat(first, s[j]);
         strcat(first, " ");
-			}
+      }
       printf("first part: %s", first);
-			
+      
       FILE *fp = popen(first, "r");
       int fd = fileno(fp);
       dup2(fd, 0);
       close(fd);
       s += i + 1;
       execvp(s[0], s);
-		}		
-	}
+    }		
+  }
 }
 
 /* simple_redirect()
@@ -163,57 +163,74 @@ void get_and_run(char * s){
     s = strsep(&s, "\n");
     printf("received %s\n", s);
 
-    /*
-    char * temp = s;
-    while (temp){
-      if (*temp == ";" && *(temp-1) == " "){
-	strcpy(temp-1, "");
-      }
-      if (*temp == ";" && *(temp+1) == " "){
-	strcpy(temp+1, "");
-      }
-      temp++;
-    }
-    */
-
     char ** commands = parse_args(s, ";");
     int num_commands = count_chars(s, ";"); //brute fix
-		
+
+    /*
+    int i;
+    int function = 0;
+    printf("num_commands = %d\n", num_commands);
+    for (i = 0; i<num_commands+1; i++) {
+      printf("===RAN===\n");
+      printf("command = %s", commands[i]);
+      if (strchr(commands[i],'|')==0) {
+	function = 1;
+      }
+      else if (strchr(commands[i],'>')==0) {
+	function = 2;
+      }
+      else if (strchr(commands[i],'<')==0) {
+	function = 3;
+      }
+    }
+    */
+    
     while (*commands && num_commands+1 >= 0){
       printf("command: %s\n", *commands);
+
+      int function = 0;
+      if (strchr(*commands,'|')) {
+	function = 1;
+	printf("1\n");
+      }
+      else if (strchr(*commands,'>')) {
+	function = 2;
+	printf("2\n");
+      }
+      else if (strchr(*commands,'<')) {
+	function = 3;
+	printf("3\n");
+      }
+
       char ** command = parse_args(*commands, " ");
-      int i;
-			int function = 0;
-			for (i = 0; command[i]; i++) {
-				if (strcmp(command[i],"|")==0) {
-					function = 1;
-				}
-				else if (strcmp(command[i],">")==0) {
-					function = 2;
-				}
-				else if (strcmp(command[i],"<")==0) {
-					function = 3;
-				}
-			}
-			if (function != 0) {
-				if (function == 1) {
-					simple_pipe(command);
-				}
-			}
-			else {
+
+      /*
+      if (function != 0) {
+	if (function == 1) {
+	  simple_pipe(command);
+	}
+      }
+      */
+      printf("?\n");
+      if (function == 1){
+	printf("duh");
+	simple_pipe(command);
+      }
+      else {
+	printf("dumb");
       	if (strcmp(*command,"exit")==0) {
-					exit_shell();
-					return;	
+	  exit_shell();
+	  return;	
       	}
       	else if (strcmp(*command,"cd")==0) {
-					cd(command[1]);
+	  cd(command[1]);
       	}
       	else if (command != NULL){
-					fork_and_run(command);
+	  fork_and_run(command);
       	}
       	commands++;
       	num_commands--;
-			}
+      }
     }
     printf("\n--\n\nenter another command: ");
   }
