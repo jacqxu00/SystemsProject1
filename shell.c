@@ -5,29 +5,6 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-/* exit()
-   description: creates an array of strings where the first element is the "exit" string
-   execvp exit using this information
-*/
-//error when
-//1. ls > foo.txt
-//2. exit
-void exit_shell() {
-  char * args[1];
-  args[0] = "exit";
-  execvp("exit",args);
-}
-
-/* cd()
-   arguments: string s
-   description: changes directory based on the argument
-   (separated function for the sake of formatting)
-*/
-void cd(char * s) {
-  chdir(s);
-}
-
-
 /* count_chars()
    arguments: string s and character/string c
    description: uses a for loop to parse through s and compares each character to c
@@ -111,6 +88,28 @@ void fork_and_run(char ** args){
       execvp(args[0], args);
     }
   }
+}
+
+/* exit()
+   description: creates an array of strings where the first element is the "exit" string
+   execvp exit using this information
+*/
+//error when
+//1. ls > foo.txt
+//2. exit
+void exit_shell() {
+  char * args[1];
+  args[0] = "exit";
+  execvp("exit",args);
+}
+
+/* cd()
+   arguments: string s
+   description: changes directory based on the argument
+   (separated function for the sake of formatting)
+*/
+void cd(char * s) {
+  chdir(s);
 }
 
 /* simple_pipe()
