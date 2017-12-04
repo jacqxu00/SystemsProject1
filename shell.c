@@ -45,7 +45,7 @@ void trim(char * arr)
 */
 char ** parse_args( char * line, char * sep ) {
   int num = count_chars(line,sep);
-  printf("num of \"%s\" in \"%s\" = %d\n", sep, line, num);
+  //printf("num of \"%s\" in \"%s\" = %d\n", sep, line, num);
   char ** args = malloc((num+1) * sizeof(char *));
   //char ** args = malloc(sizeof(line));
   char * flag = NULL;
@@ -54,7 +54,7 @@ char ** parse_args( char * line, char * sep ) {
   while ((flag = strsep(&line, sep))) {
     if (strcmp(flag, "") != 0){
       //trim(flag);
-      printf("flag %s\n", flag);
+      //printf("flag %s\n", flag);
       args[i] = flag;
       i++;
     }
@@ -75,15 +75,15 @@ void fork_and_run(char ** args){
   if (f){
     int status;
     f = wait(&status);
-    printf("\nPARENT:\n");
-    printf("child %d finished [%s] command\n", f, args[0] );
-    printf("parent %d has finished\n", getpid() );
+    //printf("\nPARENT:\n");
+    //printf("child %d finished [%s] command\n", f, args[0] );
+    //printf("parent %d has finished\n", getpid() );
   }
 
   //child
   else{
-    printf("\nCHILD:\n");
-    printf("pid: %d\n", getpid() );
+    //printf("\nCHILD:\n");
+    //printf("pid: %d\n", getpid() );
 
     /*
     int stdout_fd = dup(1);
@@ -145,7 +145,7 @@ void simple_pipe(char ** s) {
         strcat(first, s[j]);
         strcat(first, " ");
       }
-      printf("first part: %s", first);
+      //printf("first part: %s", first);
       
       FILE *fp = popen(first, "r");
       int fd = fileno(fp);
@@ -195,7 +195,7 @@ void get_and_run(char * s){
   printf("enter a command: ");
   while (fgets(s, 256, stdin)){
     s = strsep(&s, "\n");
-    printf("received %s\n", s);
+    //printf("received %s\n", s);
 
     char ** commands = parse_args(s, ";");
     int num_commands = count_chars(s, ";"); //brute fix
@@ -220,7 +220,7 @@ void get_and_run(char * s){
     */
     
     while (*commands && num_commands+1 >= 0){
-      printf("command: %s\n", *commands);
+      //printf("command: %s\n", *commands);
       
       if (strchr(*commands,'|')){
 	char ** command = parse_args(*commands, "|");
@@ -276,7 +276,7 @@ void get_and_run(char * s){
 	}
       else {
       */
-      printf("dumb");
+      //printf("dumb");
       if (strcmp(*command,"exit")==0) {
 	exit_shell();
 	return;	
