@@ -190,16 +190,16 @@ void get_and_run(char * s){
 
       int function = 0;
       if (strchr(*commands,'|')) {
-	function = 1;
-	printf("1\n");
+				function = 1;
+				printf("1\n");
       }
       else if (strchr(*commands,'>')) {
-	function = 2;
-	printf("2\n");
+				function = 2;
+				printf("2\n");
       }
       else if (strchr(*commands,'<')) {
-	function = 3;
-	printf("3\n");
+				function = 3;
+				printf("3\n");
       }
 
       char ** command = parse_args(*commands, " ");
@@ -213,20 +213,20 @@ void get_and_run(char * s){
       */
       printf("?\n");
       if (function == 1){
-	printf("duh");
-	simple_pipe(command);
+				printf("duh");
+				simple_pipe(command);
       }
       else {
-	printf("dumb");
+				printf("dumb");
       	if (strcmp(*command,"exit")==0) {
-	  exit_shell();
-	  return;	
+	 			 	exit_shell();
+	 				return;	
       	}
       	else if (strcmp(*command,"cd")==0) {
-	  cd(command[1]);
+	 			 	cd(command[1]);
       	}
       	else if (command != NULL){
-	  fork_and_run(command);
+	  			fork_and_run(command);
       	}
       	commands++;
       	num_commands--;
