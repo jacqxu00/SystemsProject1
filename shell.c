@@ -135,26 +135,34 @@ void cd(char * s) {
 */
 void simple_pipe(char ** s) {
   int i, j;
-  for (i = 0; s[i]; i++) {
-    char * temp = malloc(256 * sizeof(char *));
-    *temp = s[i][0];
-    if (strcmp(temp,"|") == 0) {
-      
-      char first[256] = "";
-      for (j = 0; j < i; j++) {
-        strcat(first, s[j]);
-        strcat(first, " ");
-      }
-      printf("first part: %s", first);
-      
-      FILE *fp = popen(first, "r");
-      int fd = fileno(fp);
-      dup2(fd, 0);
-      close(fd);
-      s += i + 1;
-      execvp(s[0], s);
-    }		
+  int f = fork();
+	
+  if (f){
+    int status;
+    f = wait(&status);
   }
+	else {
+  	for (i = 0; s[i]; i++) {
+  	  char * temp = malloc(256 * sizeof(char *));
+  	  *temp = s[i][0];
+  	  if (strcmp(temp,"|") == 0) {
+  	    
+  	    char first[256] = "";
+  	    for (j = 0; j < i; j++) {
+  	      strcat(first, s[j]);
+  	      strcat(first, " ");
+  	    }
+  	    printf("first part: %s", first);
+  	    
+  	    FILE *fp = popen(first, "r");
+  	    int fd = fileno(fp);
+  	    dup2(fd, 0);
+  	    close(fd);
+  	    s += i + 1;
+  	    execvp(s[0], s);
+  	  }		
+  	}
+	}
 }
 
 /* ======simple_redirect()======
